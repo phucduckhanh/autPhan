@@ -1,0 +1,9 @@
+Package: com.example.autotap
+Name: AutoTap
+Version: 0.1.0
+Architecture: iphoneos-arm
+Description: Tự lặp thao tác chạm trên màn hình (bản học tập/cá nhân)
+Maintainer: me
+Author: me
+Section: Tweaks
+Depends: mobilesubstrate
