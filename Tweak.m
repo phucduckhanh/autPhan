@@ -4,6 +4,7 @@
 // Chưa biên dịch/thử trên thiết bị. Cần Theos + iOS SDK, máy đã jailbreak hoặc nạp dylib được.
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import <dlfcn.h>
 #import <mach/mach_time.h>
 
@@ -177,7 +178,7 @@ static NSMutableArray<ATMarker *> *gMarkers;
     CGPoint c = m.center;
     c.x += ((double)arc4random() / UINT32_MAX * 2 - 1) * j;
     c.y += ((double)arc4random() / UINT32_MAX * 2 - 1) * j;
-    UICoordinateSpace *fixed = gWin.screen.fixedCoordinateSpace;
+    id<UICoordinateSpace> fixed = gWin.screen.fixedCoordinateSpace;
     CGPoint p = [[self root] convertPoint:c toCoordinateSpace:fixed];
     return CGPointMake(p.x / fixed.bounds.size.width, p.y / fixed.bounds.size.height);
 }
@@ -249,9 +250,9 @@ static NSMutableArray<ATMarker *> *gMarkers;
     ATConfig *c = ATConfig.shared;
     UIAlertController *a = [UIAlertController alertControllerWithTitle:@"AutoTap" message:@"Khoảng cách / Giữ (ms) / Jitter (px) / Ngẫu nhiên (%) / Tự dừng (giây, 0=tắt)" preferredStyle:UIAlertControllerStyleAlert];
     NSArray *ph = @[@"Khoảng cách (ms)", @"Giữ (ms)", @"Jitter (px)", @"Ngẫu nhiên (%)", @"Tự dừng (giây)"];
-    double vals[5] = {c.intervalMs, c.holdMs, c.jitterPx, c.randomPct, c.stopAfterSec};
+    NSArray *vals = @[@(c.intervalMs), @(c.holdMs), @(c.jitterPx), @(c.randomPct), @(c.stopAfterSec)];
     for (int i = 0; i < 5; i++) [a addTextFieldWithConfigurationHandler:^(UITextField *t) {
-        t.placeholder = ph[i]; t.text = [NSString stringWithFormat:@"%g", vals[i]]; t.keyboardType = UIKeyboardTypeDecimalPad; }];
+        t.placeholder = ph[i]; t.text = [NSString stringWithFormat:@"%g", [vals[i] doubleValue]]; t.keyboardType = UIKeyboardTypeDecimalPad; }];
     [a addAction:[UIAlertAction actionWithTitle:@"Lưu" style:UIAlertActionStyleDefault handler:^(UIAlertAction *x) {
         c.intervalMs = MAX(10, a.textFields[0].text.doubleValue); c.holdMs = MAX(1, a.textFields[1].text.doubleValue);
         c.jitterPx = MAX(0, a.textFields[2].text.doubleValue); c.randomPct = MIN(90, MAX(0, a.textFields[3].text.doubleValue));

@@ -15,3 +15,7 @@ Config (NSUserDefaults `AutoTap.cfg.v1`) → Engine (dispatch_after, khoảng c�
 ## Chưa có / hướng mở rộng
 Điểm vuốt (cần thêm sự kiện di chuyển giữa down và up), ghi–phát macro, nhiều hồ sơ, đo CPS, tự chạy khi mở app, fallback UIKit khi IOHID không dùng được.
 Chưa biên dịch/thử thiết bị: nếu lỗi biên dịch hoặc không nhận chạm, gửi log để chỉnh.
+
+## Trạng thái build
+Đã kiểm tra: biên dịch (clang, iPhoneOS14.5.sdk, arm64) và liên kết thành dylib thành công, không cảnh báo. Chưa ký (cần `ldid -S`) và chưa chạy thử trên thiết bị.
+Build thật: cài Theos (https://theos.dev/docs/installation), rồi trong thư mục dự án chạy `make package`.

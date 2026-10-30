@@ -6,6 +6,6 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = AutoTap
 AutoTap_FILES = Tweak.m
 AutoTap_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
-AutoTap_FRAMEWORKS = UIKit
+AutoTap_FRAMEWORKS = UIKit QuartzCore CoreGraphics Foundation
 
 include $(THEOS_MAKE_PATH)/tweak.mk
