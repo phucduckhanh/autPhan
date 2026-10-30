@@ -1,0 +1,41 @@
+name: Build AutoTap
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        scheme: [rootful, rootless]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cai cong cu (ldid, dpkg, gnu make)
+        run: brew install ldid dpkg make
+
+      - name: Cai Theos
+        run: |
+          git clone --recursive --depth 1 https://github.com/theos/theos.git "$HOME/theos"
+          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+
+      - name: Tai iOS SDK 14.5
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks "$HOME/sdks"
+          git -C "$HOME/sdks" sparse-checkout set iPhoneOS14.5.sdk
+          mkdir -p "$HOME/theos/sdks"
+          cp -R "$HOME/sdks/iPhoneOS14.5.sdk" "$HOME/theos/sdks/"
+
+      - name: Build .deb
+        run: |
+          export PATH="$(brew --prefix make)/libexec/gnubin:$PATH"
+          if [ "${{ matrix.scheme }}" = "rootless" ]; then export THEOS_PACKAGE_SCHEME=rootless; fi
+          make package FINALPACKAGE=1
+          ls -l packages
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AutoTap-${{ matrix.scheme }}
+          path: packages/*.deb
